@@ -1,4 +1,4 @@
-import { CssBaseline, Grid } from "@mui/material";
+import { CssBaseline, Grid, Box, CircularProgress } from "@mui/material";
 import { Suspense, lazy, useEffect, useState } from "react";
 
 const Header = lazy(() => import("./components/Header/Header"));
@@ -16,17 +16,27 @@ const App = () => {
     lat: 37.729855,
     lng: -122.476218,
   });
-  const [bounds, setBounds] = useState(null);
+  const [bounds, setBounds] = useState({});
 
   useEffect(() => {
-    const places = getPlacesData("hotels");
+    const places = getPlacesData("restaurants");
     setPlaces(places);
   }, [coordinates, bounds]);
-
-  console.log(coordinates, bounds);
   return (
     <>
-      <Suspense fallback={<p>Loading</p>}>
+      <Suspense
+        fallback={
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            bgcolor="#222"
+            height="100vh"
+          >
+            <CircularProgress style={{ color: "white" }} />
+          </Box>
+        }
+      >
         <CssBaseline />
         <Header />
         <Grid container spacing={3} style={{ width: "100%" }}>
@@ -38,6 +48,7 @@ const App = () => {
               setCoordinates={setCoordinates}
               setBounds={setBounds}
               coordinates={coordinates}
+              places={places}
             />
           </Grid>
         </Grid>
