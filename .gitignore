@@ -42,3 +42,7 @@ yarn-error.log*
 # optional: if using eslint or prettier cache
 .eslintcache
 .prettiercache
+
+map.html
+
+/data
