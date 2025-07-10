@@ -12,9 +12,20 @@ import {
   PointerImage,
 } from "./Map.styles";
 
+import mapStyles from "./map.constants";
+
 const Map = React.memo(
-  ({ setCoordinates, setBounds, coordinates, places, setChildClicked }) => {
+  ({
+    setCoordinates,
+    setBounds,
+    coordinates,
+    places,
+    setChildClicked,
+    weatherData,
+  }) => {
     const isDesktop = useMediaQuery("(min-width:600px)");
+
+    console.log({ weatherData });
 
     return (
       <StyledMapContainer>
@@ -27,7 +38,11 @@ const Map = React.memo(
           center={coordinates}
           defaultZoom={14}
           margin={[50, 50, 50, 50]}
-          options={{}}
+          options={{
+            disableDefaultUI: true,
+            zoomControl: true,
+            styles: mapStyles,
+          }}
           onChange={(e) => {
             setCoordinates({
               lat: e.center.lat,
@@ -71,6 +86,26 @@ const Map = React.memo(
               )}
             </MarkerContainer>
           ))}
+          {weatherData?.coord?.lat && weatherData?.weather?.[0] && (
+            <div
+              lat={weatherData.coord.lat}
+              lng={weatherData.coord.lon}
+              style={{
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                textAlign: "center",
+              }}
+            >
+              <img
+                src={`https://openweathermap.org/img/w/${weatherData.weather[0].icon}.png`}
+                alt="Weather icon"
+                style={{ width: 40, height: 40 }}
+              />
+              <Typography variant="caption" color="white">
+                {(weatherData.main.temp - 273.15).toFixed(1)}°C
+              </Typography>
+            </div>
+          )}
         </GoogleMapReact>
       </StyledMapContainer>
     );
