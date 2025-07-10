@@ -16,7 +16,7 @@ export const SelectEmpty = styled("div")(({ theme }) => ({
   marginTop: theme.spacing(2),
 }));
 
-export const Loading = styled("div")({
+export const LoadingDiv = styled("div")({
   height: "600px",
   display: "flex",
   justifyContent: "center",

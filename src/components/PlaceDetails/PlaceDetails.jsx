@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -14,11 +14,15 @@ import { LocationOn, Phone } from "@mui/icons-material";
 // Styled components
 import { StyledChip, Subtitle, Spacing } from "./PlaceDetails.styles";
 
-const PlaceDetails = React.memo(({ place }) => {
-  console.log(place);
+const PlaceDetails = React.memo(({ place, selected, refProp }) => {
+  useEffect(() => {
+    if (selected && refProp?.current) {
+      refProp.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [selected, refProp]);
 
   return (
-    <Card elevation={6}>
+    <Card elevation={6} ref={refProp}>
       <CardMedia
         sx={{ height: 350 }}
         image={

@@ -10,49 +10,74 @@ const PlaceDetails = lazy(() =>
 
 import { getPlacesData } from "./api";
 
+export const placesTypes = {
+  restaurants: "restaurants",
+  hotels: "hotels",
+  attractions: "attractions",
+};
+
 const App = () => {
   const [places, setPlaces] = useState([]);
+  const [filteredPlaces, setFilteredPlaces] = useState([]);
+
   const [coordinates, setCoordinates] = useState({
     lat: 37.729855,
     lng: -122.476218,
   });
   const [bounds, setBounds] = useState({});
+  const [childClicked, setChildClicked] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+  const [filterLoading, setFilterLoading] = useState(false);
+
+  const [type, setType] = useState(placesTypes.restaurants);
+  const [rating, setRating] = useState(0);
 
   useEffect(() => {
-    const places = getPlacesData("restaurants");
-    setPlaces(places);
-  }, [coordinates, bounds]);
+    setFilterLoading(true);
+    setTimeout(() => {
+      const filteredPlaces = places.filter((place) => place?.rating > rating);
+      setFilteredPlaces(filteredPlaces);
+      setFilterLoading(false);
+    }, 0);
+  }, [rating]);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const places = await getPlacesData(type);
+      setPlaces(places);
+      setFilteredPlaces([]);
+      setLoading(false);
+    })();
+  }, [type]);
   return (
     <>
-      <Suspense
-        fallback={
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            bgcolor="#222"
-            height="100vh"
-          >
-            <CircularProgress style={{ color: "white" }} />
-          </Box>
-        }
-      >
-        <CssBaseline />
-        <Header />
-        <Grid container spacing={3} style={{ width: "100%" }}>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <List places={places} />
-          </Grid>
-          <Grid size={{ xs: 12, md: 8 }}>
-            <Map
-              setCoordinates={setCoordinates}
-              setBounds={setBounds}
-              coordinates={coordinates}
-              places={places}
-            />
-          </Grid>
+      <CssBaseline />
+      <Header />
+      <Grid container spacing={3} style={{ width: "100%" }}>
+        <Grid size={{ xs: 12, md: 4 }}>
+          <List
+            places={filteredPlaces.length ? filteredPlaces : places}
+            childClicked={childClicked}
+            loading={loading}
+            filterLoading={filterLoading}
+            type={type}
+            setType={setType}
+            rating={rating}
+            setRating={setRating}
+          />
         </Grid>
-      </Suspense>
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Map
+            setCoordinates={setCoordinates}
+            setBounds={setBounds}
+            coordinates={coordinates}
+            places={filteredPlaces.length ? filteredPlaces : places}
+            setChildClicked={setChildClicked}
+          />
+        </Grid>
+      </Grid>
     </>
   );
 };

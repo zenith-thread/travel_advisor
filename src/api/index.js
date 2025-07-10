@@ -1,11 +1,14 @@
-import axios from "axios";
+import { placesTypes } from "../App";
 
-import { hotels } from "../../data/lodgings";
-import { restaurants } from "../../data/restaurants";
-import { attractions } from "../../data/attractions";
-
-export const getPlacesData = (type) => {
-  if (type === "restaurants") return restaurants;
-  else if (type === "hotels") return hotels;
-  return attractions;
+export const getPlacesData = async (type) => {
+  if (type === placesTypes.restaurants) {
+    const { restaurants } = await import("../../data/restaurants");
+    return restaurants;
+  } else if (type === placesTypes.hotels) {
+    const { hotels } = await import("../../data/lodgings");
+    return hotels;
+  } else {
+    const { attractions } = await import("../../data/attractions");
+    return attractions;
+  }
 };
